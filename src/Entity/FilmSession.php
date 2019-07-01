@@ -64,6 +64,4 @@ class FilmSession
 
         return $this;
     }
-
-
 }

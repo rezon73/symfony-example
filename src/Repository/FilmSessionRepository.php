@@ -6,6 +6,10 @@ use App\Entity\FilmSession;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * Class FilmSessionRepository
+ * @package App\Repository
+ */
 class FilmSessionRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
@@ -13,6 +17,11 @@ class FilmSessionRepository extends ServiceEntityRepository
         parent::__construct($registry, FilmSession::class);
     }
 
+    /**
+     * @param \DateTimeInterface $fromDate
+     * @param \DateTimeInterface $toDate
+     * @return FilmSession[]|null
+     */
     public function findByDates(\DateTimeInterface $fromDate, \DateTimeInterface $toDate)
     {
         $qb = $this->createQueryBuilder('s');

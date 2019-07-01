@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+/**
+ * Class FilmSessionFilter
+ * @package App\Entity
+ */
 class FilmSessionFilter
 {
     protected $fromDate;

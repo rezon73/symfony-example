@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Film;
-use App\Entity\FilmSession;
 use App\Entity\FilmSessionFilter;
 use App\Form\FilmSessionFilterForm;
 use App\Service\FilmSessionService;
@@ -16,6 +15,7 @@ class IndexController extends AbstractController
 {
     /**
      * @Route("/")
+     * @return Response
      */
     public function index()
     {
