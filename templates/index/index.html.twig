@@ -1,0 +1,45 @@
+{% extends "base.html.twig" %}
+
+{% block javascripts %}
+    <script language="JavaScript">
+        $(document).ready(function () {
+            var currentDate = new Date();
+            var currentTimestamp = currentDate.getTime();
+            var lastSubmitTime = 0;
+
+            $('form[name=add_start_link]').submit(function () {
+                currentDate = new Date();
+                currentTimestamp = currentDate.getTime();
+
+                if (currentTimestamp - lastSubmitTime < 5000) {
+                    return false;
+                }
+
+                lastSubmitTime = currentTimestamp;
+
+                return true;
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+        <p class="lead mb-4">
+            {{ form_errors(form) }}
+        </p>
+
+        <div class="lead mb-4">
+            <table>
+                <tr>
+                    <td>{{ form_row(form.fromDate) }}</td>
+                    <td>{{ form_row(form.toDate) }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="lead mb-4">
+            {{ form_row(form.submit) }}
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

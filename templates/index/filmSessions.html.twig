@@ -1,0 +1,37 @@
+{% extends "ajax.html.twig" %}
+
+{% block javascripts %}
+    <script language="JavaScript">
+        $(document).ready(function () {
+            var currentDate = new Date();
+            var currentTimestamp = currentDate.getTime();
+            var lastSubmitTime = 0;
+
+            $('form[name=add_start_link]').submit(function () {
+                currentDate = new Date();
+                currentTimestamp = currentDate.getTime();
+
+                if (currentTimestamp - lastSubmitTime < 5000) {
+                    return false;
+                }
+
+                lastSubmitTime = currentTimestamp;
+
+                return true;
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    {% for film in films %}
+        {% if sessions[film.id] is defined  %}
+            <div class="lead mb-4">
+                Фильм: <strong>{{ film.name }}</strong><br />
+                {% for session in sessions[film.id] %}
+                    {{ session.executeDate }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

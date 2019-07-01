@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * FilmSession
  *
- * @ORM\Table(name="film_session", uniqueConstraints={@ORM\UniqueConstraint(name="film_id_execute_date", columns={"film_id", "execute_date"})})
- * @ORM\Entity
+ * @ORM\Table(name="film_session", uniqueConstraints={@ORM\UniqueConstraint(name="film_session_film_id_execute_date_idx", columns={"film_id", "execute_date"}), @ORM\UniqueConstraint(name="film_session_film_id_execute_date", columns={"film_id", "execute_date"})}, indexes={@ORM\Index(name="film_session_execute_date", columns={"execute_date"})})
+ * @ORM\Entity(repositoryClass="App\Repository\FilmSessionRepository")
  */
 class FilmSession
 {
@@ -32,7 +32,7 @@ class FilmSession
     /**
      * @var \DateTime|null
      *
-     * @ORM\Column(name="execute_date", type="date", nullable=true)
+     * @ORM\Column(name="execute_date", type="datetimetz", nullable=true)
      */
     private $executeDate;
 
