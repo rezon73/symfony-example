@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Film;
 use App\Entity\FilmSession;
 use App\Entity\FilmSessionFilter;
 use App\Form\FilmSessionFilterForm;
-use App\Service\FilmService;
 use App\Service\FilmSessionService;
-use App\Utils\DateUtils;
 use \Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,11 +32,10 @@ class IndexController extends AbstractController
     /**
      * @Route("/search")
      * @param Request $request
-     * @param FilmService $filmService
      * @param FilmSessionService $filmSessionService
      * @return Response
      */
-    public function search(Request $request, FilmService $filmService, FilmSessionService $filmSessionService)
+    public function search(Request $request, FilmSessionService $filmSessionService)
     {
         $filmSessionFilter = new FilmSessionFilter();
         $form = $this->createForm(FilmSessionFilterForm::class, $filmSessionFilter);
@@ -49,7 +47,7 @@ class IndexController extends AbstractController
                     $filmSessionFilter->getToDate()
                 )->invert < 0
             ) {
-                return new Response('Ошибка даты');
+                return new Response('Дата начала должна быть меньше даты окончания');
             }
 
             $filmSessions = $filmSessionService->getGroupedFilmSessions(
@@ -57,7 +55,11 @@ class IndexController extends AbstractController
                 $filmSessionFilter->getToDate()
             );
 
-            $films = $filmService->getFilmsByFilmSessions($filmSessions);
+            $films = $this->getDoctrine()
+                ->getRepository(Film::class)
+                ->findBy([
+                    'id' => array_keys($filmSessions),
+                ]);
 
             if (empty($films) || empty($filmSessions)) {
                 return new Response('Ничего не найдено');

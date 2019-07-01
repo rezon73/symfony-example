@@ -29,7 +29,7 @@
             <div class="lead mb-4">
                 Фильм: <strong>{{ film.name }}</strong><br />
                 {% for session in sessions[film.id] %}
-                    {{ session.executeDate }}
+                    {{ session.executeDate|date('Y-m-d H:i') }}
                 {% endfor %}
             </div>
         {% endif %}
