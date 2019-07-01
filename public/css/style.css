@@ -1,3 +1,8 @@
 .film-session-date-block {
-    height: 61px !important;
+    height: 45px !important;
+}
+
+.film-item {
+    border: 1px grey dotted;
+    padding: 10px;
 }

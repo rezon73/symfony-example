@@ -14,21 +14,27 @@ class FilmSessionFilterForm extends AbstractType
     {
         $builder
             ->add('fromDate', DateTimeType::class, [
-                'label' => false,
+                'label' => 'Начальная дата',
                 'attr' => [
                     'class'       => 'form-control film-session-date-block',
                     'placeholder' => 'От',
                 ],
+                'data'        => new \DateTime(),
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
             ])
             ->add('toDate', DateTimeType::class, [
-                'label' => false,
+                'label' => 'Конечная дата',
                 'attr' => [
                     'class'       => 'form-control film-session-date-block',
                     'placeholder' => 'До',
                 ],
+                'data'        => new \DateTime('+2 day'),
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Искать',
+                'label' => 'Показать',
                 'attr' => [
                     'class' => 'btn btn-primary btn-lg btn-block',
                 ],

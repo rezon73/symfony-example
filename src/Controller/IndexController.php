@@ -45,7 +45,7 @@ class IndexController extends AbstractController
             if (
                 $filmSessionFilter->getFromDate()->diff(
                     $filmSessionFilter->getToDate()
-                )->invert < 0
+                )->invert == 1
             ) {
                 return new Response('Дата начала должна быть меньше даты окончания');
             }

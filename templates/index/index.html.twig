@@ -3,22 +3,11 @@
 {% block javascripts %}
     <script language="JavaScript">
         $(document).ready(function () {
-            var currentDate = new Date();
-            var currentTimestamp = currentDate.getTime();
-            var lastSubmitTime = 0;
-
-            $('form[name=add_start_link]').submit(function () {
-                currentDate = new Date();
-                currentTimestamp = currentDate.getTime();
-
-                if (currentTimestamp - lastSubmitTime < 5000) {
-                    return false;
-                }
-
-                lastSubmitTime = currentTimestamp;
-
-                return true;
+            $('form').ajaxForm(function (data) {
+                $('#content').html(data);
             });
+
+            $('form').submit();
         });
     </script>
 {% endblock %}
@@ -42,4 +31,6 @@
             {{ form_row(form.submit) }}
         </div>
     {{ form_end(form) }}
+
+    <div id="content"></div>
 {% endblock %}

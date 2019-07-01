@@ -35,8 +35,8 @@ WITH (
 CREATE TABLE public.film_session
 (
   id serial NOT NULL,
-  film_id integer,
-  execute_date timestamp with time zone,
+  film_id integer NOT NULL,
+  execute_date timestamp(0) with time zone NOT NULL,
   CONSTRAINT film_session_id PRIMARY KEY (id),
   CONSTRAINT film_session_film_id_execute_date UNIQUE (film_id, execute_date)
 )

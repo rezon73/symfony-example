@@ -25,14 +25,14 @@ class FilmSession
     /**
      * @var int|null
      *
-     * @ORM\Column(name="film_id", type="integer", nullable=true)
+     * @ORM\Column(name="film_id", type="integer", nullable=false)
      */
     private $filmId;
 
     /**
      * @var \DateTime|null
      *
-     * @ORM\Column(name="execute_date", type="datetimetz", nullable=true)
+     * @ORM\Column(name="execute_date", type="datetimetz", nullable=false)
      */
     private $executeDate;
 
