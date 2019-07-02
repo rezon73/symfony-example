@@ -15,7 +15,7 @@
 {% block body %}
     <div class="row">
         <div class="col-sm-12">
-            <h3>Найдено ({{ films.getTotalItemCount }})</h3>
+            <h3>Найдено ({{ filmIdRows.getTotalItemCount }})</h3>
         </div>
     </div>
 
@@ -32,5 +32,5 @@
         {% endif %}
     {% endfor %}
 
-    {{ knp_pagination_render(films) }}
+    {{ knp_pagination_render(filmIdRows) }}
 {% endblock %}

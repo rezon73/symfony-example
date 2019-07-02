@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Film;
+use App\Entity\FilmSession;
 use App\Entity\FilmSessionFilter;
 use App\Form\FilmSessionFilterForm;
 use App\Service\FilmSessionService;
@@ -50,26 +51,47 @@ class IndexController extends AbstractController
                 return new Response('Дата начала должна быть меньше даты окончания');
         }
 
+        /** @var FilmSession[] $filmIdRows */
+        $filmIdRows = $paginator->paginate(
+            $this->getDoctrine()
+                ->getRepository(FilmSession::class)
+                ->getFilmIdsQueryByDates(
+                    $filmSessionFilter->getFromDate(),
+                    $filmSessionFilter->getToDate()
+                ),
+            $request->query->getInt('page', 1),
+            static::FILM_LIMIT,
+            ['distinct' => false, 'wrap-queries' => true]
+        );
+
+        $filmIds = [];
+        foreach($filmIdRows as $filmIdRow) {
+            $filmIds[] = $filmIdRow['filmId'];
+        }
+
+        if (empty($filmIds)) {
+            return new Response('Ничего не найдено');
+        }
+
+        /** @var FilmSession[] $filmSessions */
         $filmSessions = $filmSessionService->getGroupedFilmSessions(
             $filmSessionFilter->getFromDate(),
-            $filmSessionFilter->getToDate()
+            $filmSessionFilter->getToDate(),
+            $filmIds
         );
 
         if (empty($filmSessions)) {
             return new Response('Ничего не найдено');
         }
 
-        $films = $paginator->paginate(
-            $this->getDoctrine()
-                ->getRepository(Film::class)
-                ->getQueryBuilderByIds(array_keys($filmSessions)), /* query NOT result */
-            $request->query->getInt('page', 1),
-            static::FILM_LIMIT
-        );
+        $films = $this->getDoctrine()
+            ->getRepository(Film::class)
+            ->findBy(['id' => $filmIds]);
 
         return $this->render('index/filmSessions.html.twig', [
-            'films'    => $films,
-            'sessions' => $filmSessions,
+            'filmIdRows' => $filmIdRows,
+            'films'      => $films,
+            'sessions'   => $filmSessions,
         ]);
     }
 }

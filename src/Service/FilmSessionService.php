@@ -7,8 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
  * Class FilmSessionService
- *
- * @package App\Service\FilmSessionService
+ * @package App\Service
  */
 class FilmSessionService
 {
@@ -25,16 +24,18 @@ class FilmSessionService
     /**
      * @param \DateTimeInterface $fromDate
      * @param \DateTimeInterface $toDate
+     * @param array $filmIds
      * @return FilmSession[]|null
      */
-    public function getGroupedFilmSessions(\DateTimeInterface $fromDate, \DateTimeInterface $toDate)
+    public function getGroupedFilmSessions(\DateTimeInterface $fromDate, \DateTimeInterface $toDate, array $filmIds)
     {
         /** @var FilmSession[] $filmSessions */
         $filmSessions = $this->doctrine
             ->getRepository(FilmSession::class)
-            ->findByDates(
+            ->findByDatesAndFilmIds(
                 $fromDate,
-                $toDate
+                $toDate,
+                $filmIds
             );
 
         $groupedFilmSessions = [];

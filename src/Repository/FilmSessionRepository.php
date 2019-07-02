@@ -20,19 +20,34 @@ class FilmSessionRepository extends ServiceEntityRepository
     /**
      * @param \DateTimeInterface $fromDate
      * @param \DateTimeInterface $toDate
-     * @return FilmSession[]|null
+     * @return \Doctrine\ORM\QueryBuilder
      */
-    public function findByDates(\DateTimeInterface $fromDate, \DateTimeInterface $toDate)
+    public function getFilmIdsQueryByDates(\DateTimeInterface $fromDate, \DateTimeInterface $toDate)
     {
-        $qb = $this->createQueryBuilder('s');
-        $qb
+        return $this->createQueryBuilder('s')
+            ->select(['s.filmId'])
             ->andWhere('s.executeDate BETWEEN :from AND :to')
-            ->setParameter('from', $fromDate )
+            ->setParameter('from', $fromDate)
             ->setParameter('to', $toDate)
-            ->orderBy('s.executeDate')
-        ;
-        $result = $qb->getQuery()->getResult();
+            ->groupBy('s.filmId');
+    }
 
-        return $result;
+    /**
+     * @param \DateTimeInterface $fromDate
+     * @param \DateTimeInterface $toDate
+     * @param array $filmIds
+     * @return FilmSession[]
+     */
+    public function findByDatesAndFilmIds(\DateTimeInterface $fromDate, \DateTimeInterface $toDate, array $filmIds)
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder
+            ->andWhere('s.executeDate BETWEEN :from AND :to')
+            ->andWhere($queryBuilder->expr()->in('s.filmId', $filmIds))
+            ->setParameter('from', $fromDate)
+            ->setParameter('to', $toDate)
+            ->orderBy('s.executeDate');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
