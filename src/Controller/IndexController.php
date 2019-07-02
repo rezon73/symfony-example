@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    private const FILM_LIMIT = 10;
+    private const FILM_LIMIT = 5;
 
     /**
      * @Route("/")
