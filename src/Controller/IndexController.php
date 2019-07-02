@@ -6,6 +6,7 @@ use App\Entity\Film;
 use App\Entity\FilmSessionFilter;
 use App\Form\FilmSessionFilterForm;
 use App\Service\FilmSessionService;
+use Knp\Component\Pager\PaginatorInterface;
 use \Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
+    private const FILM_LIMIT = 10;
+
     /**
      * @Route("/")
      * @return Response
@@ -21,7 +24,6 @@ class IndexController extends AbstractController
     {
         $form = $this->createForm(FilmSessionFilterForm::class, new FilmSessionFilter(), [
             'action' => '/search',
-            'method' => 'POST',
         ]);
 
         return $this->render('index/index.html.twig', [
@@ -35,42 +37,39 @@ class IndexController extends AbstractController
      * @param FilmSessionService $filmSessionService
      * @return Response
      */
-    public function search(Request $request, FilmSessionService $filmSessionService)
+    public function search(Request $request, FilmSessionService $filmSessionService, PaginatorInterface $paginator)
     {
         $filmSessionFilter = new FilmSessionFilter();
         $form = $this->createForm(FilmSessionFilterForm::class, $filmSessionFilter);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (
-                $filmSessionFilter->getFromDate()->diff(
-                    $filmSessionFilter->getToDate()
-                )->invert == 1
-            ) {
+        switch($filmSessionFilter->validate()) {
+            case FilmSessionFilter::VALIDATE_ERROR_NULLED_DATES:
+                return new Response('Не введен диапазон дат');
+            case FilmSessionFilter::VALIDATE_ERROR_INVERTED_DATES:
                 return new Response('Дата начала должна быть меньше даты окончания');
-            }
-
-            $filmSessions = $filmSessionService->getGroupedFilmSessions(
-                $filmSessionFilter->getFromDate(),
-                $filmSessionFilter->getToDate()
-            );
-
-            $films = $this->getDoctrine()
-                ->getRepository(Film::class)
-                ->findBy([
-                    'id' => array_keys($filmSessions),
-                ]);
-
-            if (empty($films) || empty($filmSessions)) {
-                return new Response('Ничего не найдено');
-            }
-
-            return $this->render('index/filmSessions.html.twig', [
-                'films'    => $films,
-                'sessions' => $filmSessions,
-            ]);
         }
 
-        return new Response('Only POST!');
+        $filmSessions = $filmSessionService->getGroupedFilmSessions(
+            $filmSessionFilter->getFromDate(),
+            $filmSessionFilter->getToDate()
+        );
+
+        if (empty($filmSessions)) {
+            return new Response('Ничего не найдено');
+        }
+
+        $films = $paginator->paginate(
+            $this->getDoctrine()
+                ->getRepository(Film::class)
+                ->getQueryBuilderByIds(array_keys($filmSessions)), /* query NOT result */
+            $request->query->getInt('page', 1),
+            static::FILM_LIMIT
+        );
+
+        return $this->render('index/filmSessions.html.twig', [
+            'films'    => $films,
+            'sessions' => $filmSessions,
+        ]);
     }
 }

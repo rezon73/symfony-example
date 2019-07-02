@@ -43,13 +43,14 @@ class FilmSessionFilterForm extends AbstractType
                     'class' => 'btn btn-primary btn-lg btn-block',
                 ],
             ])
+            ->setMethod('GET')
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => FilmSessionFilter::class
+            'data_class' => FilmSessionFilter::class,
         ]);
     }
 }

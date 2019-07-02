@@ -1,6 +1,24 @@
 {% extends "ajax.html.twig" %}
 
+{% block javascripts %}
+    <script language="JavaScript">
+        $(document).ready(function () {
+            $('.pagination a').click(function () {
+                $('#content').load($(this).attr('href'));
+
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Найдено ({{ films.getTotalItemCount }})</h3>
+        </div>
+    </div>
+
     {% for film in films %}
         {% if sessions[film.id] is defined  %}
             <div class="lead mb-4 film-item">
@@ -13,4 +31,6 @@
             </div>
         {% endif %}
     {% endfor %}
+
+    {{ knp_pagination_render(films) }}
 {% endblock %}
